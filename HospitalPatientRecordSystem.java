@@ -2,8 +2,9 @@ import java.util.*;
 
 public class HospitalPatientRecordSystem {
 
+    // ==================== ARRAYS ====================
     static int[] patientID = new int[50];
-    static String[] name = new String[50];
+    static String[] patientName = new String[50];
     static int[] age = new int[50];
     static String[] gender = new String[50];
     static String[] disease = new String[50];
@@ -192,43 +193,184 @@ public class HospitalPatientRecordSystem {
         } while (choice != 5);
 
     }
+
+    // ================== ADD PATIENT RECORD ==================
     public static void addPatientRecord(Scanner input){
+        if (patientCount == patientID.length){
+            expandArray();
+        }
+
         System.out.print("Enter Patient ID: ");
-        String patientID = input.nextLine();
+        patientID[patientCount] = input.nextInt();
+        input.nextLine();
+
         System.out.print("Enter Patient Name: ");
-        String patientName = input.nextLine();
-        int age = 0;
+        patientName[patientCount] = input.nextLine();
+
         while (true){
             System.out.print("Enter Patient Age: ");
-            age = input.nextInt();
-            if (age >= 0 && age <=120){
+            age[patientCount] = input.nextInt();
+            input.nextLine();
+            if (age[patientCount] >= 0 && age[patientCount] <=120){
                 break;
             }
             else{
-                System.out.println("Age must be between 0-120. Try Again!");
+                System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
             }
         }
+
+        System.out.print("Enter Gender: ");
+        gender[patientCount] = input.nextLine();
+
         System.out.print("Enter Disease: ");
-        String disease = input.nextLine();
-            // Avaiblable doctor // Assign doctor
+        disease[patientCount] = input.nextLine();
+  
+        // Assigning Doctor not done yet
+        System.out.print("Assign Doctor: ");
+        doctor[patientCount] = input.nextLine();
+
+        prescription[patientCount] = "Not added";
+        test[patientCount] = "Not added";
+
+        testFee[patientCount] = 0;
+        doctorFee[patientCount] = 0;
+        totalBill[patientCount] = 0;
+
+        patientCount++;
+
         System.out.println("Patient Added Successfully!");
         return;
     }
+
+    // ================== EXPAND ARRAYS ==================
+    public static void expandArray() {
+        int newSize = patientID.length * 2;
+
+        patientID = copyInt(patientID, newSize);
+        age = copyInt(age, newSize);
+
+        patientName = copyString(patientName, newSize);
+        gender = copyString(gender, newSize);
+        disease = copyString(disease, newSize);
+        doctor = copyString(doctor, newSize);
+
+        prescription = copyString(prescription, newSize);
+        test = copyString(test, newSize);
+
+        testFee = copyDouble(testFee, newSize);
+        doctorFee = copyDouble(doctorFee, newSize);
+        totalBill = copyDouble(totalBill, newSize);
+
+        System.out.println("Arrays expanded to size: " + newSize);
+    }
+
+    // ==================== COPY METHODS FOR EXPANSION ====================
+    public static int[] copyInt(int[] oldArr, int newSize) {
+        int[] newArr = new int[newSize];
+        for (int i = 0; i < oldArr.length; i++) newArr[i] = oldArr[i];
+        return newArr;
+    }
+
+    public static double[] copyDouble(double[] oldArr, int newSize) {
+        double[] newArr = new double[newSize];
+        for (int i = 0; i < oldArr.length; i++) newArr[i] = oldArr[i];
+        return newArr;
+    }
+
+    public static String[] copyString(String[] oldArr, int newSize) {
+        String[] newArr = new String[newSize];
+        for (int i = 0; i < oldArr.length; i++) newArr[i] = oldArr[i];
+        return newArr;
+    }
+
+    // ==================== VIEW ALL PATIENTS ====================
     public static void viewAllPatients(Scanner input){
-        System.out.println("Viewing All Patients....");
-        return;
+        if (patientCount == 0){
+            System.out.println("No patientss available!");
+            return;
+        }
+        for (int i = 0; i < patientCount; i++) {
+            displayPatient(i);
+        }
     }
+
+    // ==================== UPDATE PATIENT RECORD ====================
     public static void updatePatientRecord(Scanner input){
-        System.out.println("Updating Patient Record....");
-        return;
-    }
+        System.out.print("Enter Patient ID: ");
+        int ID = input.nextInt();
+        input.nextLine();
+        int choice;
+        for (int i = 0; i < patientCount; i++){
+            if (patientID[i] == ID){
+                System.out.println("Current Details: ");
+                System.out.println("1. Name");
+                System.out.println("2. Age");
+                System.out.println("3. Disease");
+                System.out.println("4. Doctor");
+
+                System.out.println("What do you want to update? (1-4): ");
+                choice = input.nextInt();
+                input.nextLine();
+
+                switch (choice){
+                    case 1:
+                        System.out.println("Enter new name: ");
+                        patientName[i] = input.nextLine();
+                        break;
+                    case 2:
+                        while (true){
+                            System.out.print("Enter Patient Age: ");
+                            age[patientCount] = input.nextInt();
+                            input.nextLine();
+                            if (age[patientCount] >= 0 && age[patientCount] <=120){
+                                break;
+                            }
+                            else{
+                                System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
+                            }
+                        }
+                        break;
+                    case 3:
+                        System.out.println("Enter new disease: ");
+                        disease[i] = input.nextLine();
+                        break;
+                    case 4:
+                        System.out.println("Enter new Available Doctor:");
+                        //       not done yet
+                        break;
+                }
+                System.out.println("Updated Successfully");
+            }
+        }
+        System.out.println("Patient Not Found.");                                                     //// Check(This line is printing even when it should not)
+            return;
+        }
+
+    // ==================== SEARCH PATIENT BY ID ====================
     public static void searchPatientByID(Scanner input){
-        System.out.println("Searching Patient By ID....");
+        System.out.print("Enter Patient ID: ");
+        int ID = input.nextInt();
+
+        for (int i = 0; i < patientCount; i++) {
+            if (patientID[i] == ID) {
+                displayPatient(i);
+                return;
+            }
+        }
+
+        System.out.println("Patient Not Found!");
         return;
     }
+
+    // ==================== BILLING ====================
     public static void billing(Scanner input){
         System.out.println("Billing....");
         return;
     }
 
+    public static void displayPatient(int i){
+        // it will include all the prestriction , fees, test, etc etc
+        // not done yet
+        return;
+    }
  }
