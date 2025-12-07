@@ -49,6 +49,7 @@ public class HospitalPatientRecordSystem {
         input.close();    
     }
 
+     // ================== Admin LOGIN ==================
     public static void  adminLogin(Scanner input){
         String username = "admin";
         String password = "admin123";
@@ -76,6 +77,35 @@ public class HospitalPatientRecordSystem {
             return;
         }
     }
+
+    // ================== DOCTOR LOGIN ==================
+    public static void doctorLogin(Scanner input){
+        String correctUser = "doctor";
+        String passKey = "1234";
+        int attempts = 0;
+        boolean loggedIn = false;
+
+        while(attempts < 3){
+            System.out.print("Enter Doctor Username: ");
+            String user = input.nextLine();
+            System.out.print("Enter Doctor Password: ");
+            String pass = input.nextLine();
+            if(user.equals(correctUser) && pass.equals(passKey)){
+                loggedIn = true;
+                System.out.println("Login successfully! Welcome Doctor.");
+                doctorMenu(input);
+                break;
+            }
+            else {
+                attempts++;
+                System.out.println("Incoorect login! Attempts left:" +(3- attempts));
+            }
+        }
+        if(!loggedIn){
+            System.out.println("\nYou have used all the Attempts! Returning to MAIN MENU..");
+            return;
+        }
+     }
 
     // ==================== ADMIN MENU ====================
     public static void adminMenu(Scanner input){
@@ -119,6 +149,49 @@ public class HospitalPatientRecordSystem {
         while(choice != 6);
     }
 
+     // ==================== DOCTOR MENU ====================
+    public static void doctorMenu(Scanner input){
+        int choice;
+            do{
+            System.out.println("\n===== DOCTOR MENU =====");
+            System.out.println("1. View My Patients");
+            System.out.println("2. Search Patients (by ID)");
+            System.out.println("3. Prescription");
+            System.out.println("4. Test");
+            System.out.println("5. Logout");
+            System.out.print("Enter user choice: ");
+            choice = input.nextInt();
+            input.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Viewing my patients...");
+                    break;
+
+                case 2:
+                    System.out.println("Searching patient by ID...");
+                    break;
+
+                case 3:
+                    System.out.println("Prescription section...");
+                    break;
+
+                case 4:
+                    System.out.println("Test section...");
+                    break;
+
+                case 5:
+                    System.out.println("Logging Out......");
+                    System.out.println("Returning to Main Menu.....");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+
+        } while (choice != 5);
+
+    }
     public static void addPatientRecord(Scanner input){
         System.out.print("Enter Patient ID: ");
         String patientID = input.nextLine();
@@ -158,8 +231,4 @@ public class HospitalPatientRecordSystem {
         return;
     }
 
-    public static void doctorLogin(Scanner input){
-	return;
-    }
-
-}
+ }
