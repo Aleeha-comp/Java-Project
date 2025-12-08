@@ -167,18 +167,22 @@ public class HospitalPatientRecordSystem {
             switch (choice) {
                 case 1:
                     System.out.println("Viewing my patients...");
+                    viewMyPatients(input);
                     break;
 
                 case 2:
                     System.out.println("Searching patient by ID...");
+                    searchPatientByID(input);
                     break;
 
                 case 3:
                     System.out.println("Prescription section...");
+                    addPrescription(input);
                     break;
 
                 case 4:
                     System.out.println("Test section...");
+                    addTest(input);
                     break;
 
                 case 5:
@@ -294,6 +298,26 @@ public class HospitalPatientRecordSystem {
         }
     }
 
+    // ================== VIEW MY PATIENTS ==================
+    public static void viewMyPatients(Scanner input) {
+        System.out.print("Enter Your Name (Doctor): ");
+        input.nextLine();
+        String doc = input.nextLine();
+
+        boolean found = false;
+
+        for (int i = 0; i < patientCount; i++) {
+            if (doctor[i].equalsIgnoreCase(doc)) {
+                displayPatient(i);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No patients assigned to this doctor.");             //see this why is it showing not assigned even when there is patient id
+        }
+    }
+
     // ==================== UPDATE PATIENT RECORD ====================
     public static void updatePatientRecord(Scanner input){
         System.out.print("Enter Patient ID: ");
@@ -340,14 +364,14 @@ public class HospitalPatientRecordSystem {
                         break;
                 }
                 System.out.println("Updated Successfully");
+                return;
             }
         }
-        System.out.println("Patient Not Found.");                                                     //// Check(This line is printing even when it should not)
-            return;
+        System.out.println("Patient Not Found.");                                                     
         }
 
     // ==================== SEARCH PATIENT BY ID ====================
-    public static void searchPatientByID(Scanner input){
+    public static void searchPatientByID(Scanner input) {
         System.out.print("Enter Patient ID: ");
         int ID = input.nextInt();
 
@@ -359,18 +383,87 @@ public class HospitalPatientRecordSystem {
         }
 
         System.out.println("Patient Not Found!");
-        return;
     }
 
     // ==================== BILLING ====================
     public static void billing(Scanner input){
         System.out.println("Billing....");
-        return;
+        System.out.print("Enter Patient ID");
+        int ID = input.nextInt();
+        for (int i = 0; i < patientCount; i++) {
+            if (patientID[i] == ID) {
+
+                System.out.print("Enter Test Fee: ");
+                testFee[i] = input.nextDouble();
+
+                System.out.print("Enter Doctor Fee: ");
+                doctorFee[i] = input.nextDouble();
+
+                totalBill[i] = testFee[i] + doctorFee[i];
+
+                System.out.println("Total Bill =" + totalBill[i]);
+
+                System.out.println("Total Bill = " + totalBill[i]);
+                return;
+            }
+        }
+        System.out.println("Patient Not Found!");
+    }     
+
+    // ================== PRESCRIPTION ==================
+    public static void addPrescription(Scanner input) {
+        System.out.print("Enter Patient ID: ");
+        int ID = input.nextInt();
+        input.nextLine();
+
+        for (int i = 0; i < patientCount; i++) {
+            if (patientID[i] == ID) {
+
+                System.out.print("Enter Prescription: ");
+                prescription[i] = input.nextLine();
+
+                System.out.println("Prescription added!");
+                return;
+            }
+        }
+
+        System.out.println("Patient Not Found!");
     }
 
-    public static void displayPatient(int i){
-        // it will include all the prestriction , fees, test, etc etc
-        // not done yet
-        return;
+     // ================== TEST ==================
+    static void addTest(Scanner input) {
+        System.out.print("Enter Patient ID: ");
+        int ID = input.nextInt();
+        input.nextLine();
+
+        for (int i = 0; i < patientCount; i++) {
+            if (patientID[i] == ID) {
+
+                System.out.print("Enter Test Name: ");
+                test[i] = input.nextLine();
+
+                System.out.println("Test added!");
+                return;
+            }
+        }
+
+        System.out.println("Patient Not Found!");
     }
- }
+    // ================== DISPLAY PATIENT ==================
+    static void displayPatient(int i) {
+        System.out.println("\n----------------------------");
+        System.out.println("ID: " + patientID[i]);
+        System.out.println("Name: " + patientName[i]);
+        System.out.println("Age: " + age[i]);
+        System.out.println("Gender: " + gender[i]);
+        System.out.println("Disease: " + disease[i]);
+        System.out.println("Doctor: " + doctor[i]);
+        System.out.println("Prescription: " + prescription[i]);
+        System.out.println("Test: " + test[i]);
+        System.out.println("Test Fee: " + testFee[i]);
+        System.out.println("Doctor Fee: " + doctorFee[i]);
+        System.out.println("Total Bill: " + totalBill[i]);
+        System.out.println("----------------------------");
+    }
+}
+
