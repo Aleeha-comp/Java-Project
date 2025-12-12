@@ -234,7 +234,6 @@ public class HospitalPatientRecordSystem {
         disease[patientCount] = input.nextLine();
   
         // See this to understand
-        System.out.println("Select Doctor: ");
         System.out.println("Select Doctor:");
         for (int i = 0; i < doctorRealNames.length; i++) {
             System.out.println((i + 1) + ". " + doctorRealNames[i]);
