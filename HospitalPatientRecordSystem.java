@@ -18,10 +18,17 @@ public class HospitalPatientRecordSystem {
     static String[] test = new String[50];
 
     static int patientCount = 0;     // number of patients
+    // ========== DOCTORS ==========
+    static String[] doctorUsernames = {"doctor1", "doctor2", "doctor3"};
+    static String[] doctorPasswords = {"1111", "2222", "3333"};
+    static String[] doctorRealNames = {"Dr.Ali", "Dr.Khan", "Dr.Sara"};
+
+    static String loggedDoctor = "";
+
+    // ==================== MAIN MENU ==================== 
     public static void main(String[] args){
         Scanner input = new Scanner (System.in);
 
-        // ==================== MAIN MENU ==================== 
         int choice;
         do{
             System.out.println("==== Main Menu ====");
@@ -74,39 +81,36 @@ public class HospitalPatientRecordSystem {
             }
         }
         if (!loggedIn){
-            System.out.println("You have used all attempts. Returning to main menu.....");
+            System.out.println("All attempts used. Returning to main menu.....");
             return;
         }
     }
 
     // ================== DOCTOR LOGIN ==================
     public static void doctorLogin(Scanner input){
-        String correctUser = "doctor";
-        String passKey = "1234";
         int attempts = 0;
-        boolean loggedIn = false;
-
-        while(attempts < 3){
+       
+         while(attempts < 3){
             System.out.print("Enter Doctor Username: ");
             String user = input.nextLine();
             System.out.print("Enter Doctor Password: ");
             String pass = input.nextLine();
-            if(user.equals(correctUser) && pass.equals(passKey)){
-                loggedIn = true;
-                System.out.println("Login successfully! Welcome Doctor.");
-                doctorMenu(input);
-                break;
+
+            for (int i = 0; i < doctorUsernames.length; i++) {
+                if(user.equals(doctorUsernames[i]) && pass.equals(doctorPasswords[i])) {
+                    loggedDoctor = doctorRealNames[i];
+                    System.out.println("Login successful! Welcome " + loggedDoctor);
+                    doctorMenu(input);
+                    return;
+                }
             }
-            else {
-                attempts++;
-                System.out.println("Incoorect login! Attempts left:" +(3- attempts));
-            }
+
+            attempts++;
+            System.out.println("Incorrect login! Attempts left: " + (3 - attempts));
         }
-        if(!loggedIn){
-            System.out.println("\nYou have used all the Attempts! Returning to MAIN MENU..");
-            return;
-        }
-     }
+
+        System.out.println("All attempts used. Returning to main menu.");
+    }
 
     // ==================== ADMIN MENU ====================
     public static void adminMenu(Scanner input){
@@ -119,7 +123,7 @@ public class HospitalPatientRecordSystem {
                 System.out.println("4. Search Patient (by ID)");
                 System.out.println("5. Billing");
                 System.out.println("6. Logout");
-                System.out.print("Enter user choice:");
+                System.out.print("Enter user choice: ");
                 choice = input.nextInt();
                 input.nextLine();
 
@@ -229,9 +233,26 @@ public class HospitalPatientRecordSystem {
         System.out.print("Enter Disease: ");
         disease[patientCount] = input.nextLine();
   
-        // Assigning Doctor not done yet
-        System.out.print("Assign Doctor: ");
-        doctor[patientCount] = input.nextLine();
+        // See this to understand
+        System.out.println("Select Doctor: ");
+        System.out.println("Select Doctor:");
+        for (int i = 0; i < doctorRealNames.length; i++) {
+            System.out.println((i + 1) + ". " + doctorRealNames[i]);
+        }
+
+        int docChoice;
+        while (true) {
+            System.out.print("Enter choice (1-" + doctorRealNames.length + "): ");
+            docChoice = input.nextInt();
+            input.nextLine();
+
+            if (docChoice >= 1 && docChoice <= doctorRealNames.length) {
+                doctor[patientCount] = doctorRealNames[docChoice - 1];
+                break;
+            } else {
+                System.out.println("Invalid choice! Try again.");
+            }
+        }
 
         prescription[patientCount] = "Not added";
         test[patientCount] = "Not added";
@@ -300,21 +321,21 @@ public class HospitalPatientRecordSystem {
 
     // ================== VIEW MY PATIENTS ==================
     public static void viewMyPatients(Scanner input) {
-        System.out.print("Enter Your Name (Doctor): ");
-        String doc = input.nextLine();
 
         boolean found = false;
 
         for (int i = 0; i < patientCount; i++) {
-            if (doctor[i].equalsIgnoreCase(doc)) {
+            if (doctor[i].equalsIgnoreCase(loggedDoctor)) {
                 displayPatient(i);
                 found = true;
             }
         }
+
         if (!found) {
-            System.out.println("No patients assigned to this doctor.");             //see this why is it showing not assigned even when there is patient id
+            System.out.println("No patients assigned to you.");
         }
     }
+
 
     // ==================== UPDATE PATIENT RECORD ====================
 public static void updatePatientRecord(Scanner input){
@@ -362,9 +383,18 @@ public static void updatePatientRecord(Scanner input){
                     disease[i] = input.nextLine();
                     break;
                 case 4:
-                    System.out.println("Enter new Available Doctor:");
-                    doctor[i] = input.nextLine();
-                    break;
+                   System.out.println("Select New Doctor:");
+                        for (int d = 0; d < doctorRealNames.length; d++) {
+                            System.out.println((d + 1) + ". " + doctorRealNames[d]);
+                        }
+                        int dChoice = input.nextInt();
+                        input.nextLine();
+                        if (dChoice >= 1 && dChoice <= doctorRealNames.length) {
+                            doctor[i] = doctorRealNames[dChoice - 1];
+                        } else {
+                            System.out.println("Invalid!");
+                        }
+                        break;
                 default:
                     System.out.println("Invalid choice!");
             }
