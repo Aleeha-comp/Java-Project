@@ -301,7 +301,6 @@ public class HospitalPatientRecordSystem {
     // ================== VIEW MY PATIENTS ==================
     public static void viewMyPatients(Scanner input) {
         System.out.print("Enter Your Name (Doctor): ");
-        input.nextLine();
         String doc = input.nextLine();
 
         boolean found = false;
@@ -312,63 +311,71 @@ public class HospitalPatientRecordSystem {
                 found = true;
             }
         }
-
         if (!found) {
             System.out.println("No patients assigned to this doctor.");             //see this why is it showing not assigned even when there is patient id
         }
     }
 
     // ==================== UPDATE PATIENT RECORD ====================
-    public static void updatePatientRecord(Scanner input){
-        System.out.print("Enter Patient ID: ");
-        int ID = input.nextInt();
-        input.nextLine();
-        int choice;
-        for (int i = 0; i < patientCount; i++){
-            if (patientID[i] == ID){
-                System.out.println("Current Details: ");
-                System.out.println("1. Name");
-                System.out.println("2. Age");
-                System.out.println("3. Disease");
-                System.out.println("4. Doctor");
+public static void updatePatientRecord(Scanner input){
+    System.out.print("Enter Patient ID: ");
+    int ID = input.nextInt();
+    input.nextLine();
+    int choice;
+    boolean patientFound = false;
+    
+    for (int i = 0; i < patientCount; i++){
+        if (patientID[i] == ID){
+            patientFound = true;
+            System.out.println("Current Details: ");
+            displayPatient(i); 
 
-                System.out.println("What do you want to update? (1-4): ");
-                choice = input.nextInt();
-                input.nextLine();
+            System.out.println("What do you want to update? (1-4): ");
+            System.out.println("1. Name");
+            System.out.println("2. Age");
+            System.out.println("3. Disease");
+            System.out.println("4. Doctor");
 
-                switch (choice){
-                    case 1:
-                        System.out.println("Enter new name: ");
-                        patientName[i] = input.nextLine();
-                        break;
-                    case 2:
-                        while (true){
-                            System.out.print("Enter Patient Age: ");
-                            age[patientCount] = input.nextInt();
-                            input.nextLine();
-                            if (age[patientCount] >= 0 && age[patientCount] <=120){
-                                break;
-                            }
-                            else{
-                                System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
-                            }
+            choice = input.nextInt();
+            input.nextLine();
+
+            switch (choice){
+                case 1:
+                    System.out.println("Enter new name: ");
+                    patientName[i] = input.nextLine();
+                    break;
+                case 2:
+                    while (true){
+                        System.out.print("Enter Patient Age: ");
+                        age[i] = input.nextInt();  
+                        input.nextLine();
+                        if (age[i] >= 0 && age[i] <= 120){
+                            break;
                         }
-                        break;
-                    case 3:
-                        System.out.println("Enter new disease: ");
-                        disease[i] = input.nextLine();
-                        break;
-                    case 4:
-                        System.out.println("Enter new Available Doctor:");
-                        //       not done yet
-                        break;
-                }
-                System.out.println("Updated Successfully");
-                return;
+                        else{
+                            System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.println("Enter new disease: ");
+                    disease[i] = input.nextLine();
+                    break;
+                case 4:
+                    System.out.println("Enter new Available Doctor:");
+                    doctor[i] = input.nextLine();
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
             }
+            System.out.println("Updated Successfully");
+            return;
         }
-        System.out.println("Patient Not Found.");                                                     
-        }
+    }
+    if (!patientFound) {
+        System.out.println("Patient Not Found.");
+    }
+}
 
     // ==================== SEARCH PATIENT BY ID ====================
     public static void searchPatientByID(Scanner input) {
@@ -388,7 +395,7 @@ public class HospitalPatientRecordSystem {
     // ==================== BILLING ====================
     public static void billing(Scanner input){
         System.out.println("Billing....");
-        System.out.print("Enter Patient ID");
+        System.out.print("Enter Patient ID: ");
         int ID = input.nextInt();
         for (int i = 0; i < patientCount; i++) {
             if (patientID[i] == ID) {
@@ -401,7 +408,7 @@ public class HospitalPatientRecordSystem {
 
                 totalBill[i] = testFee[i] + doctorFee[i];
 
-                System.out.println("Total Bill =" + totalBill[i]);
+                System.out.println("Total Bill = " + totalBill[i]);
 
                 System.out.println("Total Bill = " + totalBill[i]);
                 return;
