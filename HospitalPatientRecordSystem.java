@@ -868,6 +868,18 @@ public class HospitalPatientRecordSystem {
                 System.out.print("Enter Prescription: ");
                 prescription[i] = input.nextLine();
 
+                while (true) {
+                    try {
+                        System.out.print("Enter Doctor Fee: ");
+                        doctorFee[i] = input.nextDouble();
+                        input.nextLine(); 
+                        break; 
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Please enter a number for Patient ID.");
+                    input.nextLine(); 
+                }
+            }
+
                 saveDataToFile();
                 System.out.println("Prescription added successfully!");
                 return;
@@ -907,8 +919,20 @@ public class HospitalPatientRecordSystem {
             System.out.print("Enter Test Name: ");
             test[i] = input.nextLine();
 
+            while (true) {
+            try {
+                System.out.print("Enter Test Fee: ");
+                testFee[i] = input.nextDouble();
+                input.nextLine(); 
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid Patient ID! Enter numbers only.");
+                input.nextLine(); 
+            }
+        }
+
             saveDataToFile();
-            System.out.println("Test added successfully!");
+            System.out.println("Test added successfully with fee: " + testFee[i]);
             return;
         }
     }

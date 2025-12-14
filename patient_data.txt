@@ -2,7 +2,7 @@
 2,Saria Sadaf,44,Female,kidney,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
 3,Zoha Khalid,18,Female,skin,Dr.Mohammad,Not added,Not added,0.0,0.0,0.0
 4,Aqif Ahmed,22,Male,kidney,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
-5,Tehreem,45,Female,brain,Dr.Sara,Not added,Not added,0.0,0.0,0.0
+5,Taha Ayub,45,Female,brain,Dr.Sara,Sleeping Pills,Not added,0.0,1200.0,0.0
 6,Kashaf Ikram,60,Female,hormone,Dr.Nina,Not added,Not added,0.0,0.0,0.0
 7,Ahmed Khan,12,Male,bone,Dr.Sara,Cal-Z,Not added,0.0,0.0,0.0
 8,Kamram ,100,Male,brain,Dr.Khan,Not added,Not added,0.0,0.0,0.0
@@ -10,4 +10,4 @@
 10,Sharjeela Sharjeel,19,Female,urinary,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
 11,Abdullah Alam,29,Male,surgery,Dr.Tariq,Not added,Not added,0.0,0.0,0.0
 12,Ibrahim Dar,78,Male,mental,Dr.Jameela,Not added,Not added,0.0,0.0,0.0
-13,Alia Jabeen,98,Female,Covid-19,Dr.Ali,Not added,Not added,0.0,0.0,0.0
+14,Kamran Ali,65,Male,eye,Dr.Zara,Not added,Not added,0.0,0.0,0.0
