@@ -288,79 +288,119 @@ public class HospitalPatientRecordSystem {
 
     // ================== ADD PATIENT RECORD ==================
     public static void addPatientRecord(Scanner input) {
-        if (patientCount == patientID.length){
-            expandArray();
-        }
+        try{
+            if (patientCount == patientID.length){
+                expandArray();
+            }
 
-        int newPatientId;
-        while (true) {
-            try{
-            System.out.print("Enter Patient ID: ");
-            newPatientId = input.nextInt();
-            input.nextLine();
+            int newPatientId;
+            while (true) {
+                try{
+                    System.out.print("Enter Patient ID: ");
+                    newPatientId = input.nextInt();
+                    input.nextLine();
             
-            if (isPatientIdExists(newPatientId)) {
-                System.out.println("Patient ID already exists. Please enter a unique Patient ID.");
-            } else {
-                break; // Unique ID entered, exit the loop
+                    if (isPatientIdExists(newPatientId)) {
+                        System.out.println("Patient ID already exists. Please enter a unique Patient ID.");
+                    } else {
+                        break; // Unique ID entered, exit the loop
+                    }
+                }catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Patient ID must be a number.");
+                    input.nextLine(); 
+                }
             }
-        }catch (InputMismatchException e) {
-            System.out.println("Invalid input! Patient ID must be a number.");
-            input.nextLine(); 
-        }
-    }
     
-        patientID[patientCount] = newPatientId;
+            patientID[patientCount] = newPatientId;
 
-        System.out.print("Enter Patient Name: ");
-        patientName[patientCount] = input.nextLine();
+            System.out.print("Enter Patient Name: ");
+            String name = input.nextLine();
+            while (name.trim().isEmpty() || !isValidName(name)) {
+                System.out.print("Invalid input! Name must only contain letters and spaces. Enter Patient Name: ");
+                name = input.nextLine();
+            }
+            patientName[patientCount] = name;
 
-        while (true){
-            try{
-            System.out.print("Enter Patient Age: ");
-            age[patientCount] = input.nextInt();
-            input.nextLine();
-            if (age[patientCount] >= 0 && age[patientCount] <=120){
-                break;
+            while (true){
+                try{
+                    System.out.print("Enter Patient Age: ");
+                    age[patientCount] = input.nextInt();
+                    input.nextLine();
+                    if (age[patientCount] >= 0 && age[patientCount] <=120){
+                        break;
+                    }
+                    else{
+                        System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
+                    }
+                }catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Age must be a number.");
+                    input.nextLine();
+                }
             }
-            else{
-                System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
+
+            System.out.print("Enter Gender (Male/Female/Other): ");
+            String genderInput = input.nextLine();
+            while (!(genderInput.equalsIgnoreCase("Male") || genderInput.equalsIgnoreCase("Female") || genderInput.equalsIgnoreCase("Other"))) {
+                System.out.print("Invalid input! Please enter Male, Female, or Other: ");
+                genderInput = input.nextLine();
             }
-        }catch (InputMismatchException e) {
-            System.out.println("Invalid input! Age must be a number.");
-            input.nextLine();
+            gender[patientCount] = genderInput;
+
+            System.out.print("Enter Disease: ");
+            String diseaseInput = input.nextLine();
+            while (diseaseInput.trim().isEmpty() || isNumeric(diseaseInput)) {
+                System.out.print("Invalid input! Disease cannot be empty or numeric. \nEnter Disease: ");
+                diseaseInput = input.nextLine();
+            }
+            disease[patientCount] = diseaseInput;
+  
+            // Assign doctor according to the disease       
+            String assignedDoctor = assignDoctorBasedOnDisease(disease[patientCount]);
+            doctor[patientCount] = assignedDoctor;
+        
+            // Display assigned doctor for confirmation
+            System.out.println("Assigned Doctor: " + assignedDoctor);
+        
+
+            prescription[patientCount] = "Not added";
+            test[patientCount] = "Not added";
+
+            testFee[patientCount] = 0;
+            doctorFee[patientCount] = 0;
+            totalBill[patientCount] = 0;
+
+            // Display the newly added patient record
+            System.out.println("Patient Added Successfully!");
+            System.out.println("Added Patient Details.");
+            displayPatient(patientCount);
+        
+            patientCount++;
+            saveDataToFile();
+        } catch (Exception e){
+            System.out.println("An error occurred while adding the patient.");
+            e.printStackTrace();
         }
+            return;
     }
 
-        System.out.print("Enter Gender: ");
-        gender[patientCount] = input.nextLine();
+    public static boolean isValidName(String name) {
+    for (int i = 0; i < name.length(); i++) {
+        char c = name.charAt(i);
+        // Check if character is not a letter and not a space
+        if (!Character.isLetter(c) && c != ' ') {
+            return false;
+        }
+    }
+        return true;
+    }
 
-        System.out.print("Enter Disease: ");
-        disease[patientCount] = input.nextLine();
-  
-        // Assign doctor according to the disease       
-        String assignedDoctor = assignDoctorBasedOnDisease(disease[patientCount]);
-        doctor[patientCount] = assignedDoctor;
-        
-        // Display assigned doctor for confirmation
-        System.out.println("Assigned Doctor: " + assignedDoctor);
-        
-
-        prescription[patientCount] = "Not added";
-        test[patientCount] = "Not added";
-
-        testFee[patientCount] = 0;
-        doctorFee[patientCount] = 0;
-        totalBill[patientCount] = 0;
-
-        // Display the newly added patient record
-        System.out.println("Patient Added Successfully!");
-        System.out.println("Added Patient Details.");
-        displayPatient(patientCount);
-        
-        patientCount++;
-        saveDataToFile();
-        return;
+    public static boolean isNumeric(String str) {
+    for (int i = 0; i < str.length(); i++) {
+        if (!Character.isDigit(str.charAt(i))) {
+            return false;  // Found a non-digit character
+        }
+    }
+        return true;  // All characters are digits
     }
 
     // ================== ASSIGN DOCTOR ACCORDING TO THE DISEASE ====================
@@ -539,79 +579,177 @@ public class HospitalPatientRecordSystem {
 
     // ==================== UPDATE PATIENT RECORD ====================
     public static void updatePatientRecord(Scanner input) {
-    System.out.print("Enter Patient ID: ");
-    int ID = input.nextInt();
-    input.nextLine();
-    int choice;
-    boolean patientFound = false;
-    
-    for (int i = 0; i < patientCount; i++){
-        if (patientID[i] == ID){
-            patientFound = true;
-            System.out.println("Current Details: ");
-            displayPatient(i); 
+        boolean continueUpdating = true;
+        
+        while (continueUpdating) {
+            int ID = 0;
+            boolean validID = false;
+            
+            // Loop until a valid Patient ID is entered
+            while (!validID) {
+                System.out.print("Enter Patient ID: ");
+                
+                try {
+                    ID = input.nextInt();
+                    input.nextLine();
+                    validID = true;  // If we reach here, the input was a valid integer
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Patient ID must be a number.");
+                    input.nextLine(); // Clear the invalid input
+                    // Continue looping to ask for input again
+                }
+            }
 
-            System.out.println("What do you want to update? (1-4): ");
-            System.out.println("1. Name");
-            System.out.println("2. Age");
-            System.out.println("3. Disease");
-            System.out.println("4. Doctor");
+            boolean patientFound = false;
+            
+            for (int i = 0; i < patientCount; i++){
+                if (patientID[i] == ID){
+                    patientFound = true;
+                    System.out.println("Current Details: ");
+                    displayPatient(i); 
 
-            choice = input.nextInt();
-            input.nextLine();
+                    System.out.println("What do you want to update? (1-5): ");
+                    System.out.println("1. Name");
+                    System.out.println("2. Age");
+                    System.out.println("3. Disease");
+                    System.out.println("4. Doctor");
+                    System.out.println("5. Prescription");
 
-            switch (choice){
-                case 1:
-                    System.out.println("Enter new name: ");
-                    patientName[i] = input.nextLine();
-                    break;
-                case 2:
+                    int choice = 0;
                     while (true){
-                        System.out.print("Enter Patient Age: ");
-                        age[i] = input.nextInt();  
-                        input.nextLine();
-                        if (age[i] >= 0 && age[i] <= 120){
-                            break;
-                        }
-                        else{
-                            System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
+                        try{
+                            System.out.print("Enter your choice: ");
+                            choice = input.nextInt();
+                            input.nextLine();
+                            if (choice >= 1 && choice <= 5){
+                                break;
+                            }
+                            else{
+                                System.out.println("Invalid choice! Please choose between 1-5.");
+                            }
+                            } catch (InputMismatchException e) {
+                            System.out.println("Invalid input! Please enter a number.");
+                            input.nextLine();
                         }
                     }
-                    break;
-                case 3:
-                    System.out.println("Enter new disease: ");
-                    disease[i] = input.nextLine();
-                    // Assign doctor according to the disease       
-                    String assignedDoctor = assignDoctorBasedOnDisease(disease[i]);
-                    doctor[i] = assignedDoctor;
-                    // Display assigned doctor for confirmation
-                    System.out.println("Assigned Doctor: " + assignedDoctor);
-                    break;
-                case 4:                                                         //seeeeee
-                   System.out.println("Select New Doctor:");
-                        for (int d = 0; d < doctorNames.length; d++) {
-                            System.out.println((d + 1) + ". " + doctorNames[d]);
-                        }
-                        int dChoice = input.nextInt();
-                        input.nextLine();
-                        if (dChoice >= 1 && dChoice <= doctorNames.length) {
-                            doctor[i] = doctorNames[dChoice - 1];
-                        } else {
-                            System.out.println("Invalid!");
-                        }
+                    switch (choice){
+                        case 1:
+                            String name = "";
+                            while (true) {
+                                System.out.print("Enter new name: ");
+                                name = input.nextLine();
+                                if (!isValidName(name) || name.trim().isEmpty()) {
+                                    System.out.print("Invalid input! Name must only contain letters and spaces. \nEnter new name: ");
+                                } else {
+                                    break;  // if name is valid
+                                }
+                            }
+                            patientName[i] = name;
+                            break;
+                        case 2:
+                            while (true){
+                                try{
+                                    System.out.print("Enter Patient Age: ");
+                                    age[i] = input.nextInt();  
+                                    input.nextLine();
+                                    if (age[i] >= 0 && age[i] <= 120){
+                                        break;
+                                    }
+                                    else{
+                                        System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
+                                    }
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid input! Age must be a number between 0 and 120.");
+                                    input.nextLine();
+                                }
+                            }
+                            break;
+                        case 3:
+                            String diseaseInput = "";
+                            while (true) {
+                                System.out.print("Enter new disease: ");
+                                diseaseInput = input.nextLine();
+                                if (diseaseInput.trim().isEmpty() || isNumeric(diseaseInput)) {
+                                    System.out.print("Invalid input! Disease cannot be empty or numeric. \nEnter new disease: ");
+                                } else {
+                                    break;  // Valid disease
+                                }
+                            }
+                            disease[i] = diseaseInput;
+
+                            // Assign doctor according to the disease       
+                            String assignedDoctor = assignDoctorBasedOnDisease(disease[i]);
+                            doctor[i] = assignedDoctor;
+                            // Display assigned doctor for confirmation
+                            System.out.println("Assigned Doctor: " + assignedDoctor);
+                            break;
+                        case 4:
+                           int dChoice = 0;
+                            while (true) {
+                                System.out.println("Select New Doctor:");
+                                for (int d = 0; d < doctorNames.length; d++) {
+                                    System.out.println((d + 1) + ". " + doctorNames[d]);
+                                }
+                                try {
+                                    dChoice = input.nextInt();
+                                    input.nextLine();
+                                    if (dChoice >= 1 && dChoice <= doctorNames.length) {
+                                        doctor[i] = doctorNames[dChoice - 1];
+                                        break;  // Valid doctor selected
+                                    } else {
+                                        System.out.println("Invalid choice! Please choose a valid doctor.");
+                                    }
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid input! Please enter a number.");
+                                    input.nextLine();  // clear invalid input
+                                }
+                            }
+                            break;
+
+                        case 5:
+                            System.out.print("Enter new prescription for " + patientName[i] + ": ");
+                            String newPrescription = input.nextLine();
+
+                            // Ensure that the prescription is not empty
+                            while (newPrescription.trim().isEmpty()) {
+                                System.out.print("Invalid input! Prescription cannot be empty. Enter new prescription: ");
+                                newPrescription = input.nextLine();
+                            }
+
+                            // Update the prescription
+                            prescription[i] = newPrescription;
+                            saveDataToFile();
+                            System.out.println("Prescription updated successfully!");
+                            break;
+                        default:
+                            System.out.println("Invalid choice!");
                         break;
-                default:
-                    System.out.println("Invalid choice!");
+                    }
+
+                    saveDataToFile();
+                    System.out.println("Updated Successfully");
+                    
+                    // Ask if user wants to update another field for the same patient or a different patient
+                    System.out.print("Do you want to update another record? (y/n): ");
+                    String response = input.nextLine().trim().toLowerCase();
+                    if (!response.equals("y") && !response.equals("yes")) {
+                        continueUpdating = false;
+                    }
+                    break; // Exit the for loop after processing the patient
+                }
             }
-            saveDataToFile();
-            System.out.println("Updated Successfully");
-            return;
+            
+            if (!patientFound) {
+                System.out.println("Patient Not Found.");
+                // Ask if user wants to try again with a different patient ID
+                System.out.print("Do you want to try with another Patient ID? (y/n): ");
+                String response = input.nextLine().trim().toLowerCase();
+                if (!response.equals("y") && !response.equals("yes")) {
+                    continueUpdating = false;
+                }
+            }
         }
     }
-    if (!patientFound) {
-        System.out.println("Patient Not Found.");
-    }
-}
 
     // ==================== SEARCH My PATIENT BY ID ====================
     public static void searchMyPatientByID(Scanner input) {
@@ -652,30 +790,34 @@ public class HospitalPatientRecordSystem {
             input.nextLine(); // clear invalid input
         }
     }
+
+    boolean patientFound = false;
+
     for (int i = 0; i < patientCount; i++) {
         if (patientID[i] == ID) {
-            while (true) {
-                try {
-                    System.out.print("Enter Test Fee: ");
-                    testFee[i] = input.nextDouble();
+            patientFound = true;
+            double totalBill = 0;
 
-                    System.out.print("Enter Doctor Fee: ");
-                    doctorFee[i] = input.nextDouble();
-                    input.nextLine(); // clear buffer
-                    break;
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid input! Please enter numeric values for fees.");
-                    input.nextLine(); // clear invalid input
-                }
+            // Check if the patient has visited the doctor and calculate the fees accordingly
+            if (doctorFee[i] > 0 && testFee[i] > 0) {
+                totalBill = doctorFee[i] + testFee[i];  // Both doctor and test fees are added
+            } else if (doctorFee[i] > 0 && testFee[i] == 0) {
+                totalBill = doctorFee[i];  // Only doctor fee is added
+            } else if (doctorFee[i] == 0 && testFee[i] == 0) {
+                totalBill = 0;  // No doctor visit or test prescribed, so the total bill is zero
             }
-            totalBill[i] = testFee[i] + doctorFee[i];
-            System.out.println("Total Bill = " + totalBill[i]);
 
-            saveDataToFile(); // already handles IOException
+            System.out.println("Test Fee = " + testFee[i]);
+            System.out.println("Doctor Fee = " + doctorFee[i]);
+            System.out.println("Total Bill = " + totalBill);
+
+            saveDataToFile(); 
             return;
         }
     }
-    System.out.println("Patient Not Found!");
+    if (!patientFound) {
+        System.out.println("Patient Not Found!");
+    }
 }
 
     // ==================== SEARCH PATIENT BY ID ====================
@@ -802,5 +944,3 @@ public class HospitalPatientRecordSystem {
         System.out.println("----------------------------");
     }
 }
-
-

@@ -1,12 +1,13 @@
 1,Ali Imran,30,Male,eye,Dr.Zara,Not added,Not added,0.0,0.0,0.0
 2,Saria Sadaf,44,Female,kidney,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
 3,Zoha Khalid,18,Female,skin,Dr.Mohammad,Not added,Not added,0.0,0.0,0.0
-4,Taha Ayub,22,Male,kidney,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
-5,Anadil Awan,90,Female,eye,Dr.Zara,Not added,Not added,0.0,0.0,0.0
+4,Aqif Ahmed,22,Male,kidney,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
+5,Tehreem,45,Female,brain,Dr.Sara,Not added,Not added,0.0,0.0,0.0
 6,Kashaf Ikram,60,Female,hormone,Dr.Nina,Not added,Not added,0.0,0.0,0.0
-7,Ahmed Khan,12,Male,bone,Dr.Sara,Not added,Not added,0.0,0.0,0.0
+7,Ahmed Khan,12,Male,bone,Dr.Sara,Cal-Z,Not added,0.0,0.0,0.0
 8,Kamram ,100,Male,brain,Dr.Khan,Not added,Not added,0.0,0.0,0.0
-9,Alishba ,68,Female,bone,Dr.Sara,Not added,Not added,0.0,0.0,0.0
+9,Alishba ,68,Female,bone,Dr.Sara,Not added,Not added,500.0,500.0,1000.0
 10,Sharjeela Sharjeel,19,Female,urinary,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
 11,Abdullah Alam,29,Male,surgery,Dr.Tariq,Not added,Not added,0.0,0.0,0.0
 12,Ibrahim Dar,78,Male,mental,Dr.Jameela,Not added,Not added,0.0,0.0,0.0
+13,Alia Jabeen,98,Female,Covid-19,Dr.Ali,Not added,Not added,0.0,0.0,0.0
