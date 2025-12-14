@@ -21,8 +21,6 @@ public class HospitalPatientRecordSystem {
     static int patientCount = 0;     // number of patients
 
     // ========== DOCTORS ==========
-    static String[] doctorUsernames = {"doctor1", "doctor2", "doctor3", "doctor4", "doctor5", "doctor6", "doctor7", "doctor8", "doctor9", "doctor10"};
-    static String[] doctorPasswords = {"1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999", "1010"};
     static String[] doctorNames = {"Dr.Ali", "Dr.Khan", "Dr.Sara", "Dr.Zara", "Dr.Mohammad", "Dr.Tariq", "Dr.Fatima", "Dr.Jameela", "Dr.Hassan", "Dr.Nina"};
     static String[] doctorSpecialties = {
                                             "Cardiologist",  // Dr.Ali
@@ -47,15 +45,22 @@ public class HospitalPatientRecordSystem {
             // Read data from file before showing the main menu
             readDataFromFile();
 
-            int choice;
+            int choice = 0;
             do{
                 System.out.println("==== Main Menu ====");
                 System.out.println("1. Admin Login");
                 System.out.println("2. Doctor Login");
                 System.out.println("3.Exit");
                 System.out.print("Enter choice: ");
+                try{
                 choice = input.nextInt();
                 input.nextLine();
+                }catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Enter number only.");
+                    input.nextLine();
+                    continue;
+                }
+
                 switch(choice){
                     case 1:
                         adminLogin(input);
@@ -67,84 +72,108 @@ public class HospitalPatientRecordSystem {
                         System.out.println("Exiting.....");
                         break;
                     default:
-                        System.out.println("Invalid Input!");
+                        System.out.println("Invalid Choice!");
                 }
-            }
-            while (choice != 3);
-            
-        }
-        catch (IOException e){
-            System.out.println("An error occured with file handling.");
+            }while (choice != 3);
+          
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred.");
             e.printStackTrace();
-        }
-        catch(Exception e){
-            System.out.println("An unexpected error occured.");
-            e.printStackTrace();
-        }
-        finally{
+        } finally {
             input.close();
-        } 
-        
-    }
-
-     // ================== Admin LOGIN ==================
-    public static void  adminLogin(Scanner input) throws IOException{
-        String username = "admin";
-        String password = "admin123";
-        int attempt = 0;
-        Boolean loggedIn = false;
-
-        while (attempt < 3){
-            System.out.print("Enter Admin Username: ");
-            String user = input.nextLine();
-            System.out.print("Enter Admin Password: ");
-            String pass = input.nextLine();
-            if (user.equals(username) && pass.equals(password)){
-                loggedIn = true;
-                System.out.println("Login successfully! Welcome Admin.");
-                adminMenu(input);
-                break;
-            }
-            else{
-                attempt++;
-                System.out.println("Incorrect login! Attempts left : " + (3-attempt));
-            }
         }
-        if (!loggedIn){
-            System.out.println("All attempts used. Returning to main menu.....");
+    }  
+        
+     // ================== Admin LOGIN ==================
+    public static void adminLogin(Scanner input) {
+    File file = new File("admin.txt");
+        if (!file.exists()) {
+            System.out.println("Admin file missing!");
             return;
         }
-    }
 
-    // ================== DOCTOR LOGIN ==================                  ( the doctor should only see his patients )
-    public static void doctorLogin(Scanner input) throws IOException{
-        int attempts = 0;
-       
-         while(attempts < 3){
-            System.out.print("Enter Doctor Username: ");
-            String user = input.nextLine();
-            System.out.print("Enter Doctor Password: ");
-            String pass = input.nextLine();
+    int attempt = 0;
+    boolean loggedIn = false;
 
-            for (int i = 0; i < doctorUsernames.length; i++) {
-                if(user.equals(doctorUsernames[i]) && pass.equals(doctorPasswords[i])) {
-                    loggedDoctor = doctorNames[i];
-                    System.out.println("Login successful! Welcome " + loggedDoctor);
-                    doctorMenu(input);
-                    return;
-                }
+    while (attempt < 3) {
+
+        System.out.print("Enter Admin Username: ");
+        String user = input.nextLine();
+
+        System.out.print("Enter Admin Password: ");
+        String pass = input.nextLine();
+
+        try(Scanner reader = new Scanner(file)){
+
+        if (reader.hasNextLine()) {
+            String line = reader.nextLine();
+            String[] data = line.split(",");
+
+            if (data[0].equals(user) && data[1].equals(pass)) {
+                loggedIn = true;
+                System.out.println("Login successful! Welcome Admin.");
+                adminMenu(input);
+                return;
             }
-
-            attempts++;
-            System.out.println("Incorrect login! Attempts left: " + (3 - attempts));
+          }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error reading admin file.");
+            return;
+        }
+        attempt++;
+        System.out.println("Incorrect login! Attempts left: " + (3 - attempt));
+    }
+    System.out.println("All attempts used. Returning to main menu.");
+}
+        
+    // ================== DOCTOR LOGIN ==================                 
+    public static void doctorLogin(Scanner input) {
+    File file = new File("doctors.txt");
+        if (!file.exists()) {
+            System.out.println("Doctor file missing!");
+            return;
         }
 
+    int attempts = 0;
+
+    while (attempts < 3) {
+
+        System.out.print("Enter Doctor Username: ");
+        String user = input.nextLine();
+
+        System.out.print("Enter Doctor Password: ");
+        String pass = input.nextLine();
+
+        try(Scanner reader = new Scanner(file)){
+
+        while (reader.hasNextLine()) {
+            String line = reader.nextLine();
+            String[] data = line.split(",");
+
+            String savedUser = data[0];
+            String savedPass = data[1];
+            String savedDoctorName = data[2];
+
+            if (savedUser.equals(user) && savedPass.equals(pass)) {
+                loggedDoctor = savedDoctorName;
+                System.out.println("Login successful! Welcome " + loggedDoctor);
+                doctorMenu(input);
+                return;
+            }
+        }
+        }catch (FileNotFoundException e) {
+            System.out.println("Error reading admin file.");
+            return;
+        }
+        attempts++;
+        System.out.println("Incorrect login! Attempts left: " + (3 - attempts));
+        }
         System.out.println("All attempts used. Returning to main menu.");
     }
 
     // ==================== ADMIN MENU ====================
-    public static void adminMenu(Scanner input) throws IOException{
-	    int choice;
+    public static void adminMenu(Scanner input) {
+	    int choice = 0;
             do{
                 System.out.println("\n==== ADMIN MENU ====");
                 System.out.println("1. Add Patient Record");
@@ -153,11 +182,21 @@ public class HospitalPatientRecordSystem {
                 System.out.println("4. Search Patient (by ID)");
                 System.out.println("5. Billing");
                 System.out.println("6. Logout");
-                System.out.print("Enter user choice: ");
-                choice = input.nextInt();
-                input.nextLine();
 
-                switch(choice){
+             boolean validInput = false;
+
+            while (!validInput) {
+            System.out.print("Enter user choice: ");
+            try {
+                choice = input.nextInt();
+                input.nextLine(); 
+                validInput = true; // input is valid, exit inner loop
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a number between 1 and 5.");
+                input.nextLine(); 
+                 }
+            }
+                   switch(choice){
                     case 1:
                         System.out.println("Adding Patient Record....");
                         addPatientRecord(input);
@@ -183,15 +222,15 @@ public class HospitalPatientRecordSystem {
                         System.out.println("Returning to Main Menu.....");
                         return;
                     default:
-                        System.out.println("Invalid Input!");
+                        System.out.println("Invalid Choice!");
                 }
             }
         while(choice != 6);
     }
 
      // ==================== DOCTOR MENU ====================
-    public static void doctorMenu(Scanner input) throws IOException{
-        int choice;
+    public static void doctorMenu(Scanner input) {
+        int choice = 0;
             do{
             System.out.println("\n===== DOCTOR MENU =====");
             System.out.println("1. View My Patients");
@@ -199,9 +238,19 @@ public class HospitalPatientRecordSystem {
             System.out.println("3. Prescription");
             System.out.println("4. Test");
             System.out.println("5. Logout");
+            boolean validInput = false;
+
+            while (!validInput) {
             System.out.print("Enter user choice: ");
-            choice = input.nextInt();
-            input.nextLine();
+            try {
+                choice = input.nextInt();
+                input.nextLine(); 
+                validInput = true; // input is valid, exit inner loop
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input! Please enter a number between 1 and 5.");
+                input.nextLine(); 
+                 }
+        }
 
             switch (choice) {
                 case 1:
@@ -211,7 +260,7 @@ public class HospitalPatientRecordSystem {
 
                 case 2:
                     System.out.println("Searching patient by ID...");
-                    searchPatientByID(input);
+                    searchMyPatientByID(input);
                     break;
 
                 case 3:
@@ -238,13 +287,14 @@ public class HospitalPatientRecordSystem {
     }
 
     // ================== ADD PATIENT RECORD ==================
-    public static void addPatientRecord(Scanner input) throws IOException{
+    public static void addPatientRecord(Scanner input) {
         if (patientCount == patientID.length){
             expandArray();
         }
 
         int newPatientId;
         while (true) {
+            try{
             System.out.print("Enter Patient ID: ");
             newPatientId = input.nextInt();
             input.nextLine();
@@ -254,14 +304,19 @@ public class HospitalPatientRecordSystem {
             } else {
                 break; // Unique ID entered, exit the loop
             }
+        }catch (InputMismatchException e) {
+            System.out.println("Invalid input! Patient ID must be a number.");
+            input.nextLine(); 
         }
-        
+    }
+    
         patientID[patientCount] = newPatientId;
 
         System.out.print("Enter Patient Name: ");
         patientName[patientCount] = input.nextLine();
 
         while (true){
+            try{
             System.out.print("Enter Patient Age: ");
             age[patientCount] = input.nextInt();
             input.nextLine();
@@ -271,7 +326,11 @@ public class HospitalPatientRecordSystem {
             else{
                 System.out.println("Age must be between 0-120. Invalid Input! Try Again!");
             }
+        }catch (InputMismatchException e) {
+            System.out.println("Invalid input! Age must be a number.");
+            input.nextLine();
         }
+    }
 
         System.out.print("Enter Gender: ");
         gender[patientCount] = input.nextLine();
@@ -350,7 +409,7 @@ public class HospitalPatientRecordSystem {
     }
 }
     // ================== EXPAND ARRAYS ==================
-    public static void expandArray() throws IOException{
+    public static void expandArray() {
         int newSize = patientID.length * 2;
 
         patientID = copyInt(patientID, newSize);
@@ -372,7 +431,7 @@ public class HospitalPatientRecordSystem {
     }
 
     // ==================== COPY METHODS FOR EXPANSION ====================
-    public static int[] copyInt(int[] oldArr, int newSize) throws IOException{
+    public static int[] copyInt(int[] oldArr, int newSize) {
         int[] newArr = new int[newSize];
         for (int i = 0; i < oldArr.length; i++) newArr[i] = oldArr[i];
         return newArr;
@@ -391,7 +450,8 @@ public class HospitalPatientRecordSystem {
     }
 
     // ==================== SAVE DATA TO FILE ====================
-     public static void saveDataToFile() throws IOException {
+    public static void saveDataToFile() {
+        try{
         FileWriter fw = new FileWriter("patient_data.txt", false);  // True--> Append Data To File
         BufferedWriter writer = new BufferedWriter(fw);
 
@@ -403,16 +463,19 @@ public class HospitalPatientRecordSystem {
         }
         writer.close();
         System.out.println("Patient data saved successfully.");
+         } catch (IOException e) {
+        System.out.println("Error saving data: " + e.getMessage());
+        }
     }
     // ==================== READ DATA FROM FILE ====================
-    public static void readDataFromFile() throws IOException {
+    public static void readDataFromFile() {
     File file = new File("patient_data.txt");
     if (!file.exists()) {
         System.out.println("File not Found.");
         return;
     }
 
-    Scanner reader = new Scanner(file);
+    try(Scanner reader = new Scanner(file)){
     while (reader.hasNextLine()) {
         String line = reader.nextLine();
         String[] data = line.split(",");
@@ -438,12 +501,16 @@ public class HospitalPatientRecordSystem {
             patientCount++;  // Increment the patient count as data is added
         }
     }
-    reader.close();
     System.out.println("Patient data loaded successfully.");
+    }catch (IOException e) {
+        System.out.println("Error reading file: " + e.getMessage());
+    }catch (NumberFormatException e) {
+        System.out.println("Data format error in file: " + e.getMessage());
+    }
 }
 
     // ==================== VIEW ALL PATIENTS ======================
-    public static void viewAllPatients(Scanner input) throws IOException{
+    public static void viewAllPatients(Scanner input) {
         if (patientCount == 0){
             System.out.println("No patientss available!");
             return;
@@ -454,7 +521,7 @@ public class HospitalPatientRecordSystem {
     }
 
     // ================== VIEW MY PATIENTS ==================
-    public static void viewMyPatients(Scanner input) throws IOException{
+    public static void viewMyPatients(Scanner input) {
 
         boolean found = false;
 
@@ -470,9 +537,8 @@ public class HospitalPatientRecordSystem {
         }
     }
 
-
     // ==================== UPDATE PATIENT RECORD ====================
-public static void updatePatientRecord(Scanner input) throws IOException{
+    public static void updatePatientRecord(Scanner input) {
     System.out.print("Enter Patient ID: ");
     int ID = input.nextInt();
     input.nextLine();
@@ -521,7 +587,7 @@ public static void updatePatientRecord(Scanner input) throws IOException{
                     // Display assigned doctor for confirmation
                     System.out.println("Assigned Doctor: " + assignedDoctor);
                     break;
-                case 4:
+                case 4:                                                         //seeeeee
                    System.out.println("Select New Doctor:");
                         for (int d = 0; d < doctorNames.length; d++) {
                             System.out.println((d + 1) + ". " + doctorNames[d]);
@@ -547,90 +613,168 @@ public static void updatePatientRecord(Scanner input) throws IOException{
     }
 }
 
-    // ==================== SEARCH PATIENT BY ID ====================
-    public static void searchPatientByID(Scanner input) throws IOException{
-        System.out.print("Enter Patient ID: ");
-        int ID = input.nextInt();
-
-        for (int i = 0; i < patientCount; i++) {
-            if (patientID[i] == ID) {
-                displayPatient(i);
-                return;
-            }
+    // ==================== SEARCH My PATIENT BY ID ====================
+    public static void searchMyPatientByID(Scanner input) {
+        int ID ; 
+    while (true) {
+        try {
+            System.out.print("Enter Patient ID: ");
+            ID = input.nextInt();
+            input.nextLine(); 
+            break; 
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input! Please enter a number for Patient ID.");
+            input.nextLine(); 
         }
-
-        System.out.println("Patient Not Found!");
     }
-
-    // ==================== BILLING ====================
-    public static void billing(Scanner input) throws IOException{
-        System.out.println("Billing....");
-        System.out.print("Enter Patient ID: ");
-        int ID = input.nextInt();
-        for (int i = 0; i < patientCount; i++) {
-            if (patientID[i] == ID) {
-
-                System.out.print("Enter Test Fee: ");
-                testFee[i] = input.nextDouble();
-
-                System.out.print("Enter Doctor Fee: ");
-                doctorFee[i] = input.nextDouble();
-
-                totalBill[i] = testFee[i] + doctorFee[i];
-
-                System.out.println("Total Bill = " + totalBill[i]);
-                saveDataToFile();
-                return;
-            }
+    for (int i = 0; i < patientCount; i++) {
+        if (patientID[i] == ID && doctor[i].equalsIgnoreCase(loggedDoctor)) {
+            displayPatient(i);
+            return;
         }
-        System.out.println("Patient Not Found!");
-    }     
+    }
+    System.out.println("Access Denied!");
+    System.out.println("This patient is not assigned to you.");
+}
+    // ==================== BILLING ====================
+    public static void billing(Scanner input) {
+    System.out.println("Billing....");
+
+    int ID ;
+    while (true) {
+        try {
+            System.out.print("Enter Patient ID: ");
+            ID = input.nextInt();
+            input.nextLine(); // clear buffer
+            break; // valid input
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input! Please enter a numeric Patient ID.");
+            input.nextLine(); // clear invalid input
+        }
+    }
+    for (int i = 0; i < patientCount; i++) {
+        if (patientID[i] == ID) {
+            while (true) {
+                try {
+                    System.out.print("Enter Test Fee: ");
+                    testFee[i] = input.nextDouble();
+
+                    System.out.print("Enter Doctor Fee: ");
+                    doctorFee[i] = input.nextDouble();
+                    input.nextLine(); // clear buffer
+                    break;
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Please enter numeric values for fees.");
+                    input.nextLine(); // clear invalid input
+                }
+            }
+            totalBill[i] = testFee[i] + doctorFee[i];
+            System.out.println("Total Bill = " + totalBill[i]);
+
+            saveDataToFile(); // already handles IOException
+            return;
+        }
+    }
+    System.out.println("Patient Not Found!");
+}
+
+    // ==================== SEARCH PATIENT BY ID ====================
+    public static void searchPatientByID(Scanner input) {
+        int ID;
+          while (true) {
+        try {
+            System.out.print("Enter Patient ID: ");
+            ID = input.nextInt();
+            input.nextLine(); 
+            break; 
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input! Please enter a number for Patient ID.");
+            input.nextLine(); 
+        }
+    }
+    for (int i = 0; i < patientCount; i++) {
+        if (patientID[i] == ID) {
+            displayPatient(i);
+            return;
+        }
+    }
+    System.out.println("Patient Not Found!");
+}
 
     // ================== PRESCRIPTION ==================
-    public static void addPrescription(Scanner input) throws IOException{
-        System.out.print("Enter Patient ID: ");
-        int ID = input.nextInt();
-        input.nextLine();
-
-        for (int i = 0; i < patientCount; i++) {
+    public static void addPrescription(Scanner input) {
+         int ID;
+          while (true) {
+        try {
+            System.out.print("Enter Patient ID: ");
+            ID = input.nextInt();
+            input.nextLine(); 
+            break; 
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input! Please enter a number for Patient ID.");
+            input.nextLine(); 
+        }
+    }
+   
+    for (int i = 0; i < patientCount; i++) {
             if (patientID[i] == ID) {
-
+                if (!doctor[i].equalsIgnoreCase(loggedDoctor)) {
+                System.out.println("Access denied");
+                System.out.println("You cannot add prescription for another doctor's patient.");
+                return;
+            }
                 System.out.print("Enter Prescription: ");
                 prescription[i] = input.nextLine();
 
                 saveDataToFile();
-
-                System.out.println("Prescription added!");
+                System.out.println("Prescription added successfully!");
                 return;
             }
         }
-
         System.out.println("Patient Not Found!");
     }
 
      // ================== TEST ==================
-    static void addTest(Scanner input) throws IOException{
-        System.out.print("Enter Patient ID: ");
-        int ID = input.nextInt();
-        input.nextLine();
+    public static void addTest(Scanner input) {
+    int ID;
 
-        for (int i = 0; i < patientCount; i++) {
-            if (patientID[i] == ID) {
-
-                System.out.print("Enter Test Name: ");
-                test[i] = input.nextLine();
-
-                System.out.println("Test added!");
-
-                saveDataToFile();
-                
-                return;
-            }
+    while (true) {
+        try {
+            System.out.print("Enter Patient ID: ");
+            ID = input.nextInt();
+            input.nextLine(); 
+            break;
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid Patient ID! Enter numbers only.");
+            input.nextLine(); 
         }
-
-        System.out.println("Patient Not Found!");
     }
 
+    boolean patientFound = false;
+
+    for (int i = 0; i < patientCount; i++) {
+        if (patientID[i] == ID) {
+            patientFound = true;
+
+            if (!doctor[i].equalsIgnoreCase(loggedDoctor)) {
+                System.out.println("Access denied");
+                System.out.println("You cannot add test for another doctor's patient.");
+                return;
+            }
+
+            System.out.print("Enter Test Name: ");
+            test[i] = input.nextLine();
+
+            saveDataToFile();
+            System.out.println("Test added successfully!");
+            return;
+        }
+    }
+    if (!patientFound) {
+        System.out.println("Patient Not Found!");
+    }
+}
+    
     // ================== CHECK IF PATIENT ID EXISTS ==================
     public static boolean isPatientIdExists(int id) {
         for (int i = 0; i < patientCount; i++) {
@@ -642,7 +786,7 @@ public static void updatePatientRecord(Scanner input) throws IOException{
     }
 
     // ================== DISPLAY PATIENT ==================
-    static void displayPatient(int i) throws IOException{
+    static void displayPatient(int i) {
         System.out.println("\n----------------------------");
         System.out.println("ID: " + patientID[i]);
         System.out.println("Name: " + patientName[i]);
@@ -658,4 +802,5 @@ public static void updatePatientRecord(Scanner input) throws IOException{
         System.out.println("----------------------------");
     }
 }
+
 
