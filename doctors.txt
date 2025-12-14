@@ -1,0 +1,10 @@
+doctor1,1111,Dr.Ali
+doctor2,2222,Dr.Khan
+doctor3,3333,Dr.Sara
+doctor4,4444,Dr.Zara
+doctor5,5555,Dr.Mohammad
+doctor6,6666,Dr.Tariq
+doctor7,7777,Dr.Fatima
+doctor8,8888,Dr.Jameela
+doctor9,9999,Dr.Hassan
+doctor10,1010,Dr.Nina
