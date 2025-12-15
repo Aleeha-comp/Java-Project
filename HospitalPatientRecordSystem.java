@@ -711,14 +711,13 @@ public class HospitalPatientRecordSystem {
                             String newPrescription = input.nextLine();
 
                             // Ensure that the prescription is not empty
-                            while (newPrescription.trim().isEmpty()) {
-                                System.out.print("Invalid input! Prescription cannot be empty. Enter new prescription: ");
+                            while (newPrescription.trim().isEmpty() || !isValidName(newPrescription)) {
+                                System.out.print("Invalid input! Prescription cannot be empty and cannot be a number. Enter new prescription: ");
                                 newPrescription = input.nextLine();
                             }
 
                             // Update the prescription
                             prescription[i] = newPrescription;
-                            saveDataToFile();
                             System.out.println("Prescription updated successfully!");
                             break;
                         default:
@@ -851,7 +850,8 @@ public class HospitalPatientRecordSystem {
             System.out.print("Enter Patient ID: ");
             ID = input.nextInt();
             input.nextLine(); 
-            break; 
+	        break;
+
         } catch (InputMismatchException e) {
             System.out.println("Invalid input! Please enter a number for Patient ID.");
             input.nextLine(); 
@@ -865,8 +865,15 @@ public class HospitalPatientRecordSystem {
                 System.out.println("You cannot add prescription for another doctor's patient.");
                 return;
             }
+            while (true){
                 System.out.print("Enter Prescription: ");
                 prescription[i] = input.nextLine();
+                if (!isValidName(prescription[i]) || prescription[i].trim().isEmpty()) {
+                    System.out.print("Invalid input! Name must only contain letters and spaces.");
+                } else {
+                    break;  // if name is valid
+                }
+            }
 
                 while (true) {
                     try {

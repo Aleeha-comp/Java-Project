@@ -2,7 +2,7 @@
 2,Saria Sadaf,44,Female,kidney,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
 3,Zoha Khalid,18,Female,skin,Dr.Mohammad,Not added,Not added,0.0,0.0,0.0
 4,Aqif Ahmed,22,Male,kidney,Dr.Hassan,Not added,Not added,0.0,0.0,0.0
-5,Taha Ayub,45,Female,brain,Dr.Sara,Sleeping Pills,Not added,0.0,1200.0,0.0
+5,Taha Ayub,45,Female,brain,Dr.Sara,Panadol,Not added,0.0,2000.0,0.0
 6,Kashaf Ikram,60,Female,hormone,Dr.Nina,Not added,Not added,0.0,0.0,0.0
 7,Ahmed Khan,12,Male,bone,Dr.Sara,Cal-Z,X-Ray,2000.0,1000.0,0.0
 8,Kamram ,100,Male,brain,Dr.Khan,Sleeping Pills,MRI,3000.0,1500.0,0.0
