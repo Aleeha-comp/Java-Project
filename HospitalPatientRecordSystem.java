@@ -711,7 +711,7 @@ public class HospitalPatientRecordSystem {
                             String newPrescription = input.nextLine();
 
                             // Ensure that the prescription is not empty
-                            while (newPrescription.trim().isEmpty() || !isValidName(newPrescription)) {
+                            while (newPrescription.trim().isEmpty() || isNumeric(newPrescription)) {
                                 System.out.print("Invalid input! Prescription cannot be empty and cannot be a number. Enter new prescription: ");
                                 newPrescription = input.nextLine();
                             }
@@ -868,7 +868,7 @@ public class HospitalPatientRecordSystem {
             while (true){
                 System.out.print("Enter Prescription: ");
                 prescription[i] = input.nextLine();
-                if (!isValidName(prescription[i]) || prescription[i].trim().isEmpty()) {
+                if (isNumeric(prescription[i]) || prescription[i].trim().isEmpty()) {
                     System.out.print("Invalid input! Name must only contain letters and spaces.");
                 } else {
                     break;  // if name is valid
